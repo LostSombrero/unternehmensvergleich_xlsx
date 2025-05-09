@@ -54,54 +54,58 @@ Werte ändern → Skript neu starten – kein Code‑Edit nötig.
 
 ## 4  Formeln
 
-### 1 Domain‑Matching
+### 4.1 Domain‑Matching
 
-```
+```text
 https://www.beispiel.de/shop  →  beispiel.de
 ```
 
-Das `www.`‑Präfix und Pfad werden entfernt; Sub‑Domains wie *shop.* bleiben bestehen.
+Entfernt werden Präfix `www.` und Pfadangaben; Sub‑Domains wie `shop.beispiel.de` bleiben erhalten.
 
-### 2 Häufigkeits‑Score (HS)
+### 4.2 Häufigkeits‑Score (HS)
 
-$$
-HS = \sum_{i=1}^{n} w_i \cdot I_i
-$$
+Berechnet sich als Summe der gewogenen Vorkommen:
 
-* *n* – Zahl der eingelesenen Dateien (2–4)
-* *wᵢ* – Gewicht der Datei *i* (aus GUI, Default = 1)
-* *Iᵢ* – 1, wenn Firma in Datei *i* vorkommt, sonst 0
+```text
+HS = Σ_{i=1..n}(w_i · I_i)
+```
 
-### 3 Bewertungs‑Score (BS)
+* n = Anzahl der eingelesenen Dateien (2 – 4)
+* w\_i = Gewicht der Datei i (über GUI definiert, Standard = 1)
+* I\_i = 1, wenn das Unternehmen in Datei i enthalten ist, sonst 0
 
-Zuerst über alle Dateien ein **Review‑gewichteter Durchschnitt**:
+### 4.3 Bewertungs‑Score (BS)
 
-$$
-R_{\text{mix}} = \frac{\sum R_i v_i}{\sum v_i}, \qquad v_{\text{mix}} = \sum v_i
-$$
+1. **Review‑gewichteter Durchschnitt** aller Ratings:
 
-Danach:
+```text
+R_mix = (Σ (R_i · v_i)) / (Σ v_i)
+v_mix = Σ v_i
+```
 
-$$
-\[
-BS = \begin{cases}
-R_{\text{mix}} \left(1 + \log_b(1 + v_{\text{mix}})\right), & \text{falls } v_{\text{mix}} \ge \texttt{MIN\_REVIEW\_COUNT} \\\\
-\texttt{FALLBACK\_SCORE}, & \text{sonst}
-\end{cases}
-\]
-$$
+2. **BS** anhand von R\_mix und v\_mix:
 
-### 4 Gesamt‑Score (GS)
+```text
+if v_mix >= MIN_REVIEW_COUNT:
+    BS = R_mix * (1 + log_b(1 + v_mix))
+else:
+    BS = FALLBACK_SCORE
+```
 
-$$
-GS = \alpha \cdot HS + \beta \cdot BS
-$$
+* log\_b ist der Logarithmus zur Basis LOG\_BASE
+* FALLBACK\_SCORE wird verwendet, wenn keine oder zu wenige Reviews vorliegen
 
-Dabei gilt:  $\alpha = \text{ALPHA}$, $\beta = \text{BETA}$
+### 4.4 Gesamt‑Score (GS)
 
----
+Kombiniert Häufigkeit und Bewertungs‑Score:
 
-## 5  Plots
+```text
+GS = ALPHA * HS + BETA * BS
+```
+
+* ALPHA und BETA stammen aus der `config.csv`
+
+## 5  Plots  Plots
 
 Wenn `SHOW_PLOTS = 1`, erscheinen zwei Scatter‑Plots direkt nach dem Lauf.
 
