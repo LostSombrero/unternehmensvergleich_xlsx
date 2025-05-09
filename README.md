@@ -54,65 +54,52 @@ Werte ändern → Skript neu starten – kein Code‑Edit nötig.
 
 ## 4  Formeln
 
-**### 1 Domain‑Matching**
+### 1 Domain‑Matching
 
-\`\`\`
+```
+https://www.beispiel.de/shop  →  beispiel.de
+```
 
-[https://www.beispiel.de/shop](https://www.beispiel.de/shop)  →  beispiel.de
+Das `www.`‑Präfix und Pfad werden entfernt; Sub‑Domains wie *shop.* bleiben bestehen.
 
-\`\`\`
+### 2 Häufigkeits‑Score (HS)
 
-\`[www.\`‑Präfix](http://www.`‑Präfix) & Pfad werden entfernt; Sub‑Domains wie *\*shop.\** bleiben bestehen.
+$$
+HS = \sum_{i=1}^{n} w_i \cdot I_i
+$$
 
-**### 2 Häufigkeits‑Score (HS)**
+* *n* – Zahl der eingelesenen Dateien (2–4)
+* *wᵢ* – Gewicht der Datei *i* (aus GUI, Default = 1)
+* *Iᵢ* – 1, wenn Firma in Datei *i* vorkommt, sonst 0
 
-\$\$
+### 3 Bewertungs‑Score (BS)
 
-HS = \sum\_{i=1}^{n} w\_i\\,I\_i
+Zuerst über alle Dateien ein **Review‑gewichteter Durchschnitt**:
 
-\$\$
-
-\* *\*n\** – Zahl der eingelesenen Dateien (2 – 4)
-
-\* *\*wᵢ\** – Gewicht Datei *\*i\** (GUI, Default 1)
-
-\* *\*Iᵢ\** – 1, wenn Firma in Datei *\*i\** vorkommt, sonst 0\\
-
-**### 3 Bewertungs‑Score (BS)**
-
-Zuerst über alle Dateien ein **\*\*Review‑gewichteter Durchschnitt\*\***:
-
-\$\$
-
-R\_{mix}=\frac{\sum R\_i v\_i}{\sum v\_i},\qquad v\_{mix}=\sum v\_i
-
-\$\$
+$$
+R_{\text{mix}} = \frac{\sum R_i v_i}{\sum v_i}, \qquad v_{\text{mix}} = \sum v_i
+$$
 
 Danach:
 
-\$\$
-
+$$
+\[
 BS = \begin{cases}
-
-R\_{mix}\\,\bigl(1+\log\_{b}(1+v\_{mix})\bigr), & v\_{mix} \ge \text{MIN\\\_REVIEW\\\_COUNT}\\\\\[6pt]
-
-\text{FALLBACK\\\_SCORE}, & \text{sonst}
-
+R_{\text{mix}} \left(1 + \log_b(1 + v_{\text{mix}})\right), & \text{falls } v_{\text{mix}} \ge \texttt{MIN\_REVIEW\_COUNT} \\\\
+\texttt{FALLBACK\_SCORE}, & \text{sonst}
 \end{cases}
+\]
+$$
 
-\$\$
+### 4 Gesamt‑Score (GS)
 
-**### 4 Gesamt‑Score (GS)**
+$$
+GS = \alpha \cdot HS + \beta \cdot BS
+$$
 
-\$\$
+Dabei gilt:  $\alpha = \text{ALPHA}$, $\beta = \text{BETA}$
 
-GS = \alpha\\,HS + \beta\\,BS
-
-\$\$
-
-\* \$\alpha = \text{ALPHA}\$   \$\beta = \text{BETA}\$
-
-\---
+---
 
 ## 5  Plots
 
